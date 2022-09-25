@@ -1,0 +1,40 @@
+version: "3.9"
+services:
+  calendarbd:
+    image: mongo:5.0.0    
+    restart: always
+    networks:
+      - calendar-app
+    container_name: calendarbd
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo:/data/db
+
+  calendar-back:
+    image: urielch19/calendar-back:1.0
+    container_name: calendar-back
+    networks:
+      - calendar-app
+    ports:
+      - 8080:8080
+    depends_on:
+      - calendarbd
+    restart: always
+
+  calendar-front:
+    image: urielch19/calendar-app:1.0
+    container_name: calendar-front
+    networks:
+      - calendar-app
+    ports:
+      - 80:80
+    depends_on:
+      - calendar-back
+    restart: always
+
+networks:
+  calendar-app:    
+    driver: bridge
+
+
